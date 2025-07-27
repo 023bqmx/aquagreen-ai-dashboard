@@ -52,6 +52,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// AquaGreen AI colors
+				aqua: {
+					blue: 'hsl(var(--aqua-blue))',
+					green: 'hsl(var(--aqua-green))',
+				},
+				water: {
+					light: 'hsl(var(--water-light))',
+					dark: 'hsl(var(--water-dark))',
+				},
+				success: 'hsl(var(--success))',
+				warning: 'hsl(var(--warning))',
+				error: 'hsl(var(--error))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
