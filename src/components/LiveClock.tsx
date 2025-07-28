@@ -25,8 +25,8 @@ const LiveClock = () => {
   };
 
   return (
-    <div className="px-4 py-2 bg-error/10 border border-error/20 rounded-full">
-      <span className="text-error font-medium text-sm">
+    <div className="px-4 py-2 bg-red-50 border border-red-200 rounded-full">
+      <span className="text-red-600 font-medium text-sm">
         {formatDate(currentTime)}
       </span>
     </div>

@@ -8,13 +8,13 @@ import AlertSystem from "@/components/AlertSystem";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <Breadcrumb />
         
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">แดชบอร์ด</h1>
           <LiveClock />
         </div>
 
