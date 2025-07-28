@@ -7,8 +7,55 @@ const axios = require('axios');
 initializeApp();
 const db = getFirestore();
 
-// *** แทนที่ด้วย Line Notify Token ของคุณจริงๆ ที่ได้จาก Line Notify website ***
-const LINE_NOTIFY_TOKEN = 'YOUR_LINE_NOTIFY_TOKEN';
+// *** แทนที่ด้วย Channel Access Token ของคุณจาก Line Messaging API ***
+const LINE_CHANNEL_ACCESS_TOKEN = 'NlqE6Z+IQZCUdMxf5mUSLkJ/1AcbV2uY50KrtnrN7wJ9UQgrOmAFMXVoRnyNiDeccUvbZesi5sN3qyOKWcEiPCPHRdmJdSJ6oN8A+OfIrBr0c23i4RajjytwTi1c5fULL2zQ2yPZEJNS1OEqDh9L+gdB04t89/1O/w1cDnyilFU=';
+
+// *** ใส่ User ID ของผู้ที่จะรับการแจ้งเตือน ***
+const NOTIFICATION_USER_ID = 'U412269167a85d5416b4a25b63b1cd2ce'; // ต้องเป็น friend ของ bot
+
+// Function สำหรับทดสอบ Line Token
+exports.testLineToken = require('firebase-functions').https.onRequest(async (req, res) => {
+    try {
+        console.log('Testing Line Messaging API Token...');
+        
+        const response = await axios.post(
+            'https://api.line.me/v2/bot/message/push',
+            {
+                to: NOTIFICATION_USER_ID,
+                messages: [
+                    {
+                        type: 'text',
+                        text: '🧪 Testing Line Messaging API Token from Firebase Functions\n📅 ' + new Date().toLocaleString('th-TH')
+                    }
+                ]
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
+                }
+            }
+        );
+        
+        res.json({
+            success: true,
+            message: 'Token is valid!',
+            status: response.status,
+            data: response.data
+        });
+        
+    } catch (error) {
+        console.error('Token test failed:', error.message);
+        
+        res.status(500).json({
+            success: false,
+            message: 'Token test failed',
+            error: error.message,
+            status: error.response?.status,
+            data: error.response?.data
+        });
+    }
+});
 
 exports.sendLineNotification = onDocumentCreated(
     'sensor_readings/{docId}',
@@ -83,21 +130,29 @@ exports.sendLineNotification = onDocumentCreated(
         // }
 
         try {
-            console.log('Attempting to send Line notification...'); // Log ก่อนส่ง
+            console.log('Attempting to send Line message...'); // Log ก่อนส่ง
             const response = await axios.post(
-                'https://notify-api.line.me/api/notify',
-                'message=' + encodeURIComponent(message),
+                'https://api.line.me/v2/bot/message/push',
+                {
+                    to: NOTIFICATION_USER_ID,
+                    messages: [
+                        {
+                            type: 'text',
+                            text: message
+                        }
+                    ]
+                },
                 {
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': `Bearer ${LINE_NOTIFY_TOKEN}`
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
                     }
                 }
             );
-            console.log('Line notification sent successfully! Response status:', response.status); // Log เมื่อส่งสำเร็จ
+            console.log('Line message sent successfully! Response status:', response.status); // Log เมื่อส่งสำเร็จ
             return null;
         } catch (error) {
-            console.error('Error sending Line notification:', error.message); // Log ข้อผิดพลาด
+            console.error('Error sending Line message:', error.message); // Log ข้อผิดพลาด
             if (error.response) {
                 console.error('Line API Response Data:', error.response.data); // Log รายละเอียดจาก Line API
                 console.error('Line API Response Status:', error.response.status);
