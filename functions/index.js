@@ -1,19 +1,26 @@
 // functions/index.js
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const axios = require('axios'); // ตรวจสอบว่ามีบรรทัดนี้แล้ว
+const {onDocumentCreated} = require('firebase-functions/v2/firestore');
+const {initializeApp} = require('firebase-admin/app');
+const {getFirestore} = require('firebase-admin/firestore');
+const axios = require('axios');
 
-admin.initializeApp();
-const db = admin.firestore();
+initializeApp();
+const db = getFirestore();
 
 // *** แทนที่ด้วย Line Notify Token ของคุณจริงๆ ที่ได้จาก Line Notify website ***
 const LINE_NOTIFY_TOKEN = 'YOUR_LINE_NOTIFY_TOKEN';
 
-exports.sendLineNotification = functions.firestore
-    .document('sensor_readings/{docId}')
-    .onCreate(async (snap, context) => {
+exports.sendLineNotification = onDocumentCreated(
+    'sensor_readings/{docId}',
+    async (event) => {
+        const snap = event.data;
+        if (!snap) {
+            console.log('No data associated with the event');
+            return;
+        }
+        
         const data = snap.data();
-        console.log('Function triggered: New sensor data received:', data); // Log เมื่อ Function เริ่มทำงานและได้ข้อมูลอะไรมา
+        console.log('Function triggered: New sensor data received:', data);
 
         let message = '\nสถานะค่าคุณภาพน้ำ:\n';
         let hasAlert = false;
