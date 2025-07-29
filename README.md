@@ -1,53 +1,67 @@
-# 🌊 Aquagreen AI Dashboard
+# 🌊 AquaGreen AI Dashboa## 📋 **ไฟล์สำคัญ:**
 
-Real-time water quality monitoring dashboard with Arduino integration.
+| ไฟล์ | ใช้สำหรับ |
+|------|----------|
+| ⭐ `QUICK_START.md` | เริ่มใช้งานแบบเร็ว (อ่านก่อน!) |
+| 🔗 `FRIEND_LINK_GUIDE.md` | วิธีลิงค์โค้ดเพื่อนเข้าระบบ |
+| ✅ `friend_code_clean.ino` | โค้ด Arduino (เวอร์ชันสะอาด) |
+| ✅ `ARDUINO_SETUP.md` | คู่มือติดตั้ง Arduino |
+| ✅ `test_arduino_data.js` | ทดสอบระบบ |ตรวจสอบคุณภาพน้ำแบบ Real-time ที่ใช้ Arduino + Web Dashboard + Line แจ้งเตือน
 
-## 🚀 Features
+## 🚀 **เปิดใช้งานง่ายๆ:**
 
-- **Real-time Dashboard** - Live sensor data visualization
-- **Arduino Integration** - Direct sensor data collection  
-- **Firebase Backend** - Cloud database and functions
-- **Line Notifications** - Automated alerts for abnormal readings
-- **Responsive Design** - Works on desktop and mobile
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Vite + TypeScript + React + shadcn-ui + Tailwind CSS
-- **Backend**: Firebase Firestore + Firebase Functions
-- **Notifications**: Line Messaging API
-- **Hardware**: Arduino UNO R4 WiFi + Water Quality Sensors
-
-## 📊 Quick Start
-
-### 1. Run Dashboard
+### **👨‍💻 สำหรับเพื่อนที่จะใช้ Arduino:**
 ```bash
-npm install
-npm run dev
-```
-Dashboard will be available at: http://localhost:8081
-
-### 2. Arduino Integration
-See **[ARDUINO_API.md](./ARDUINO_API.md)** for complete Arduino integration guide.
-
-**Quick API Info:**
-- **Endpoint**: Firebase Firestore REST API
-- **API Key**: `AIzaSyB88B5BQM3OJPXZGLFYBZopAOYhOaBQdio`
-- **Project**: `arduinosensoralerts`
-
-### 3. Test Data
-```bash
-node test_arduino_data.js
+ดู: QUICK_START.md
 ```
 
-## 🔗 Arduino Connection
+### **💻 สำหรับคนที่จะเปิด Web Dashboard:**
+```bash
+# Windows
+start-dashboard.bat
 
-For Arduino developers, see **[ARDUINO_API.md](./ARDUINO_API.md)** which includes:
-- Complete API documentation
-- Sample Arduino code (WiFi/HTTP)
-- JSON payload format
-- Troubleshooting guide
+# Manual  
+npm install && npm run dev
+```
 
-## 📱 System Flow
+## 🌐 **ลิงก์สำคัญ:**
+
+- **🌐 Dashboard Online**: [aquagreen-ai-dashboard](https://aquagreen-ai-dashboard-q7tq0p1hj-worrapat-bots-projects.vercel.app)
+- **📱 Local**: http://localhost:5173
+
+## � **ไฟล์สำคัญ:**
+
+| ไฟล์ | ใช้สำหรับ |
+|------|----------|
+| ✅ `friend_code_clean.ino` | โค้ด Arduino (เวอร์ชันสะอาด) |
+| ✅ `QUICK_START.md` | เริ่มใช้งานแบบเร็ว |
+| ✅ `ARDUINO_SETUP.md` | คู่มือติดตั้ง Arduino |
+| ✅ `ARDUINO_API.md` | คู่มือ API รายละเอียด |
+| ✅ `HOW_TO_RUN.md` | คู่มือเปิดระบบครบครัน |
+| ✅ `test_arduino_data.js` | ทดสอบระบบ |
+
+## 🎯 **ความสามารถ:**
+
+- ✅ **Arduino**: ส่งข้อมูลเซนเซอร์ TDS, pH, Temp, Turbidity
+- ✅ **Blynk App**: ดูข้อมูลบนมือถือแบบ Real-time  
+- ✅ **Web Dashboard**: กราฟและประวัติข้อมูล
+- ✅ **Line แจ้งเตือน**: เมื่อน้ำผิดปกติ
+- ✅ **Deploy Online**: ใช้งานได้ทุกที่
+
+## � **เทคโนโลยี:**
+
+- **Frontend**: React + TypeScript + Tailwind
+- **Backend**: Firebase + Functions
+- **Hardware**: Arduino ESP32/NodeMCU
+- **Deploy**: Vercel
+
+## 📞 **ติดต่อ:**
+
+มีปัญหาหรือต้องการความช่วยเหลือ สามารถถามได้เลย! �
+
+---
+
+**สร้างด้วย ❤️ เพื่อน้ำที่สะอาดและปลอดภัย** 🌊
 
 ```
 Arduino Sensors → Firebase Firestore → Dashboard + Line Alerts
