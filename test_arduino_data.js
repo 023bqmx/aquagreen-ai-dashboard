@@ -15,8 +15,8 @@ function sendArduinoTestData() {
         turbidity: 10 + Math.random() * 20,            // Turbidity 10-30%
         temperature: 25 + Math.random() * 10,          // Temperature 25-35°C
         timestamp: new Date().toISOString(),
-        location: "Arduino_UNO_R4",
-        device_id: "ARDUINO_001"
+        location: "Blynk_Device",
+        device_id: "BLYNK_001"
     };
 
     // สร้าง Firestore document format (เหมือนใน Arduino)

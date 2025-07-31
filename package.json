@@ -8,7 +8,13 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:arduino": "node test_arduino_data.js",
+    "test:line": "cd functions && node test-line-token.js",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:all": "firebase deploy",
+    "start": "npm run dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

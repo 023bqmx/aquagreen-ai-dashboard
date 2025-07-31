@@ -69,56 +69,76 @@ exports.sendLineNotification = onDocumentCreated(
         const data = snap.data();
         console.log('Function triggered: New sensor data received:', data);
 
-        let message = '\nสถานะค่าคุณภาพน้ำ:\n';
+        let message = '🌊 รายงานคุณภาพน้ำ Aquagreen AI\n';
+        message += `📅 ${new Date().toLocaleString('th-TH')}\n\n`;
         let hasAlert = false;
 
+        // รองรับทั้ง field name แบบเก่าและใหม่
+        const ph = data.ph_value || data.ph;
+        const tds = data.tds_value || data.tds;
+        const turbidity = data.turbidity_value || data.turbidity;
+        const temperature = data.temperature_value || data.temperature;
+
         // ตรวจสอบค่า pH
-        if (data.ph_value === undefined) {
+        if (ph === undefined || ph === null) {
             console.warn('pH value is undefined in data.');
             message += `❓ pH: ไม่พบข้อมูล\n`;
-        } else if (data.ph_value < 6.0 || data.ph_value > 8.0) {
-            message += `⚠️ pH: ${data.ph_value} (ผิดปกติ!)\n`;
+            hasAlert = true;
+        } else if (ph < 6.0 || ph > 8.0) {
+            message += `⚠️ pH: ${ph.toFixed(2)} (ผิดปกติ! ควรอยู่ระหว่าง 6.0-8.0)\n`;
             hasAlert = true;
         } else {
-            message += `✅ pH: ${data.ph_value} (ปกติ)\n`;
+            message += `✅ pH: ${ph.toFixed(2)} (ปกติ)\n`;
         }
 
         // ตรวจสอบค่า TDS
-        if (data.tds_value === undefined) {
+        if (tds === undefined || tds === null) {
             console.warn('TDS value is undefined in data.');
             message += `❓ TDS: ไม่พบข้อมูล\n`;
-        } else if (data.tds_value > 500) { // สมมติว่าเกิน 500 ppm คือผิดปกติ
-            message += `⚠️ TDS: ${data.tds_value} ppm (ผิดปกติ!)\n`;
+            hasAlert = true;
+        } else if (tds > 400) { // เกิน 400 ppm คือผิดปกติ
+            message += `⚠️ TDS: ${tds.toFixed(1)} ppm (สูงเกินไป! ควรต่ำกว่า 400 ppm)\n`;
             hasAlert = true;
         } else {
-            message += `✅ TDS: ${data.tds_value} ppm (ปกติ)\n`;
+            message += `✅ TDS: ${tds.toFixed(1)} ppm (ปกติ)\n`;
         }
 
         // ตรวจสอบค่า Turbidity
-        if (data.turbidity_value === undefined) {
+        if (turbidity === undefined || turbidity === null) {
             console.warn('Turbidity value is undefined in data.');
             message += `❓ ความขุ่น: ไม่พบข้อมูล\n`;
-        } else if (data.turbidity_value > 50) { // สมมติว่าเกิน 50 NTU คือผิดปกติ
-            message += `⚠️ ความขุ่น: ${data.turbidity_value} NTU (ผิดปกติ!)\n`;
+            hasAlert = true;
+        } else if (turbidity > 40) { // เกิน 40 NTU คือผิดปกติ
+            message += `⚠️ ความขุ่น: ${turbidity.toFixed(1)} NTU (สูงเกินไป! ควรต่ำกว่า 40 NTU)\n`;
             hasAlert = true;
         } else {
-            message += `✅ ความขุ่น: ${data.turbidity_value} NTU (ปกติ)\n`;
+            message += `✅ ความขุ่น: ${turbidity.toFixed(1)} NTU (ปกติ)\n`;
         }
 
         // ตรวจสอบค่า Temperature
-        if (data.temperature_value === undefined) {
+        if (temperature === undefined || temperature === null) {
             console.warn('Temperature value is undefined in data.');
             message += `❓ อุณหภูมิ: ไม่พบข้อมูล\n`;
-        } else if (data.temperature_value < 20 || data.temperature_value > 30) { // สมมติว่าต่ำกว่า 20 หรือสูงกว่า 30 คือผิดปกติ
-            message += `⚠️ อุณหภูมิ: ${data.temperature_value}°C (ผิดปกติ!)\n`;
+            hasAlert = true;
+        } else if (temperature < 20 || temperature > 35) { // นอกช่วง 20-35°C คือผิดปกติ
+            message += `⚠️ อุณหภูมิ: ${temperature.toFixed(1)}°C (ผิดปกติ! ควรอยู่ระหว่าง 20-35°C)\n`;
             hasAlert = true;
         } else {
-            message += `✅ อุณหภูมิ: ${data.temperature_value}°C (ปกติ)\n`;
+            message += `✅ อุณหภูมิ: ${temperature.toFixed(1)}°C (ปกติ)\n`;
         }
 
 
         if (!hasAlert) {
-            message += '✨ ค่าคุณภาพน้ำทั้งหมดอยู่ในเกณฑ์ปกติ\n';
+            message += '\n🎉 ค่าคุณภาพน้ำทั้งหมดอยู่ในเกณฑ์ปกติ!\n';
+        } else {
+            message += '\n⚠️ มีค่าที่ต้องตรวจสอบ โปรดดำเนินการแก้ไข\n';
+        }
+        
+        // เพิ่มข้อมูลตำแหน่งและอุปกรณ์
+        if (data.location || data.device_id) {
+            message += '\n📍 ข้อมูลอุปกรณ์:\n';
+            if (data.location) message += `🏠 ตำแหน่ง: ${data.location}\n`;
+            if (data.device_id) message += `🔧 อุปกรณ์: ${data.device_id}\n`;
         }
 
         console.log('Generated Line message content:', message); // Log ข้อความที่จะส่ง
