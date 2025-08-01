@@ -5,6 +5,8 @@ import SensorReadings from "@/components/SensorReadings";
 import TrendChart from "@/components/TrendChart";
 import DailyReportChart from "@/components/DailyReportChart";
 import AlertSystem from "@/components/AlertSystem";
+import FirebaseTestComponent from "@/components/FirebaseTestComponent";
+import SimpleFirebaseChart from "@/components/SimpleFirebaseChart";
 
 const Index = () => {
   return (
@@ -23,6 +25,11 @@ const Index = () => {
           <AlertSystem />
         </div>
 
+        {/* Firebase Test Component */}
+        <div className="mb-8">
+          <FirebaseTestComponent />
+        </div>
+
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Left Column - System Status */}
@@ -38,7 +45,7 @@ const Index = () => {
 
         {/* Bottom Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <TrendChart />
+          <SimpleFirebaseChart />
           <DailyReportChart />
         </div>
       </div>

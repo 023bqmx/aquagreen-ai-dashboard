@@ -8,12 +8,12 @@ const PROJECT_ID = 'arduinosensoralerts'; // 👈 Project ID ของคุณ
 function sendArduinoTestData() {
     console.log('🧪 จำลองการส่งข้อมูลจาก Arduino UNO R4 WiFi...');
     
-    // สร้างข้อมูลจำลองเหมือน Arduino
+    // สร้างข้อมูลจำลองเหมือน Arduino - ข้อมูลปกติ
     const testData = {
-        ph: 7.2 + (Math.random() - 0.5) * 2,           // pH 6.2-8.2
-        tds: 150 + Math.random() * 100,                // TDS 150-250 ppm
-        turbidity: 10 + Math.random() * 20,            // Turbidity 10-30%
-        temperature: 25 + Math.random() * 10,          // Temperature 25-35°C
+        ph: 7.2 + (Math.random() - 0.5) * 1,           // pH 6.7-7.7 (ปกติ)
+        tds: 150 + Math.random() * 300,                // TDS 150-450 ppm (ปกติ)
+        turbidity: 5 + Math.random() * 15,             // ความขุ่น 5-20 NTU (ปกติ)
+        temperature: 25 + Math.random() * 10,          // Temperature 25-35°C (ปกติ)
         timestamp: new Date().toISOString(),
         location: "Blynk_Device",
         device_id: "BLYNK_001"

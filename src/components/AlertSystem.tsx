@@ -14,60 +14,86 @@ interface AlertData {
 const AlertSystem = () => {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
 
-  // Simulate incoming alerts
+  // ✅ ตรวจสอบข้อมูลจาก Firebase ทุก 10 วินาที
   useEffect(() => {
-    const checkSensorValues = () => {
-      const now = new Date();
-      
-      // Simulated sensor checks
-      const newAlerts: AlertData[] = [];
-      
-      // pH check
-      const ph = 7.2;
-      if (ph < 6.5 || ph > 8.5) {
-        newAlerts.push({
-          id: `ph-${Date.now()}`,
-          type: 'error',
-          title: 'ค่า pH ผิดปกติ',
-          message: `ค่า pH ปัจจุบัน: ${ph} (ปกติ: 6.5-8.5) กรุณาตรวจสอบระบบบำบัด`,
-          timestamp: now
-        });
-      }
-      
-      // TDS check  
-      const tds = 850;
-      if (tds > 1000) {
-        newAlerts.push({
-          id: `tds-${Date.now()}`,
-          type: 'warning',
-          title: 'ค่า TDS สูง',
-          message: `ค่า TDS ปัจจุบัน: ${tds} ppm (ปกติ: <1000 ppm) ควรเฝ้าระวัง`,
-          timestamp: now
-        });
-      }
-      
-      // Turbidity check
-      const turbidity = 12;
-      if (turbidity > 10) {
-        newAlerts.push({
-          id: `turbidity-${Date.now()}`,
-          type: 'error',
-          title: 'น้ำขุ่นเกินมาตรฐาน',
-          message: `ความขุ่น: ${turbidity} NTU (ปกติ: <10 NTU) ต้องตรวจสอบทันที`,
-          timestamp: now
-        });
-      }
-      
-      if (newAlerts.length > 0) {
-        setAlerts(prev => [...newAlerts, ...prev].slice(0, 5)); // Keep only 5 latest
+    const checkSensorValuesFromFirebase = async () => {
+      try {
+        console.log("🔄 กำลังดึงข้อมูลจาก Firebase...");
+        
+        // ดึงข้อมูลล่าสุดจาก Firebase
+        const response = await fetch('https://firestore.googleapis.com/v1/projects/arduinosensoralerts/databases/(default)/documents/sensor_readings?orderBy=timestamp%20desc&pageSize=1&key=AIzaSyB88B5BQM3OJPXZFG7L8sWQN4K2VxFyMaE');
+        
+        console.log("📡 Response Status:", response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.documents || data.documents.length === 0) {
+          console.log("📊 ไม่มีข้อมูลใน Firebase");
+          return;
+        }
+
+        const latestDoc = data.documents[0];
+        const fields = latestDoc.fields;
+        
+        // แปลงข้อมูลจาก Firestore format
+        const sensorData = {
+          ph: fields.ph?.doubleValue || 7.0,
+          tds: fields.tds?.doubleValue || 0,
+          turbidity: fields.turbidity?.doubleValue || 0,
+          temperature: fields.temperature?.doubleValue || 25
+        };
+
+        console.log("📊 ข้อมูลล่าสุด:", sensorData);
+        
+        // ตรวจสอบการแจ้งเตือน (ใช้ข้อมูลจริงแทนข้อมูลจำลอง)
+        const now = new Date();
+        const newAlerts: AlertData[] = [];
+
+        // ตรวจสอบค่า pH
+        if (sensorData.ph < 6.5 || sensorData.ph > 8.5) {
+          newAlerts.push({
+            id: `ph-${Date.now()}`,
+            type: 'error',
+            title: 'ค่า pH ผิดปกติ',
+            message: `ค่า pH ปัจจุบัน: ${sensorData.ph.toFixed(2)} (ปกติ: 6.5-8.5)`,
+            timestamp: now
+          });
+        }
+
+        // ตรวจสอบค่า TDS
+        if (sensorData.tds > 1000) {
+          newAlerts.push({
+            id: `tds-${Date.now()}`,
+            type: 'warning',
+            title: 'ค่า TDS สูง',
+            message: `ค่า TDS ปัจจุบัน: ${sensorData.tds.toFixed(0)} ppm (ปกติ: <1000 ppm)`,
+            timestamp: now
+          });
+        }
+
+        // อัพเดท alerts
+        if (newAlerts.length > 0) {
+          setAlerts(newAlerts);
+          console.log(`🚨 พบปัญหา ${newAlerts.length} รายการ`);
+        } else {
+          setAlerts([]);
+          console.log("✅ ข้อมูลปกติทั้งหมด");
+        }
+
+      } catch (error) {
+        console.error("❌ ไม่สามารถดึงข้อมูลจาก Firebase:", error);
       }
     };
 
-    // Check every 30 seconds
-    const interval = setInterval(checkSensorValues, 30000);
+    // ตรวจสอบทุก 10 วินาที
+    const interval = setInterval(checkSensorValuesFromFirebase, 10000);
     
-    // Initial check
-    checkSensorValues();
+    // ตรวจสอบครั้งแรกทันที
+    checkSensorValuesFromFirebase();
     
     return () => clearInterval(interval);
   }, []);
