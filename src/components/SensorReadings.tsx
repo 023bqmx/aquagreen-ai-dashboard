@@ -95,7 +95,7 @@ const SensorReadings = () => {
         return 'error';
       case 'turbidity':
         if (value <= 10) return 'normal';
-        if (value <= 25) return 'warning';
+        if (value <= 50) return 'warning';
         return 'error';
       case 'temperature':
         if (value >= 20 && value <= 30) return 'normal';
