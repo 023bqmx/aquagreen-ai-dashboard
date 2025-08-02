@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "arduinosensoralerts"
-  }
+    "default": "arduinosensoralerts",
+    "production": "arduinosensoralerts"
+  },
+  "targets": {},
+  "etags": {}
 }
