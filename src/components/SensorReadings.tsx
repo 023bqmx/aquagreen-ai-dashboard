@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface SensorData {
   id: string;
@@ -12,45 +13,104 @@ interface SensorData {
 }
 
 const SensorReadings = () => {
-  // Simulated sensor data
-  const sensorData: SensorData[] = [
-    {
-      id: "ph",
-      name: "ค่า pH",
-      value: 7.2,
-      unit: "",
-      status: 'normal',
-      normalRange: [6.5, 8.5],
-      listenings: 245
-    },
-    {
-      id: "tds", 
-      name: "ค่า TDS",
-      value: 850,
-      unit: "ppm",
-      status: 'warning',
-      normalRange: [500, 1000],
-      listenings: 189
-    },
-    {
-      id: "turbidity",
-      name: "ความขุ่น",
-      value: 12,
-      unit: "NTU",
-      status: 'error',
-      normalRange: [0, 10],
-      listenings: 156
-    },
-    {
-      id: "temperature",
-      name: "อุณหภูมิ",
-      value: 28,
-      unit: "°C",
-      status: 'normal',
-      normalRange: [20, 35],
-      listenings: 98
+  const [realSensorData, setRealSensorData] = useState<SensorData[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+
+  // Fetch data from Firebase
+  const fetchSensorData = async () => {
+    try {
+      const response = await fetch(
+        'https://firestore.googleapis.com/v1/projects/arduinosensoralerts/databases/(default)/documents/sensor_readings?orderBy=timestamp%20desc&pageSize=1&key=AIzaSyB88B5BQM3OJPXZFG7L8sWQN4K2VxFyMaE',
+        {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          }
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.documents && data.documents.length > 0) {
+          const doc = data.documents[0];
+          const fields = doc.fields;
+          
+          const sensorReadings: SensorData[] = [
+            {
+              id: "ph",
+              name: "ค่า pH",
+              value: parseFloat(fields.ph?.doubleValue || fields.ph?.stringValue || '0'),
+              unit: "",
+              status: getStatus(parseFloat(fields.ph?.doubleValue || fields.ph?.stringValue || '0'), 'ph'),
+              normalRange: [6.5, 8.5],
+              listenings: 245
+            },
+            {
+              id: "tds", 
+              name: "ค่า TDS",
+              value: parseFloat(fields.tds?.doubleValue || fields.tds?.stringValue || '0'),
+              unit: "ppm",
+              status: getStatus(parseFloat(fields.tds?.doubleValue || fields.tds?.stringValue || '0'), 'tds'),
+              normalRange: [0, 300],
+              listenings: 189
+            },
+            {
+              id: "turbidity",
+              name: "ความขุ่น",
+              value: parseFloat(fields.turbidity?.doubleValue || fields.turbidity?.stringValue || '0'),
+              unit: "NTU",
+              status: getStatus(parseFloat(fields.turbidity?.doubleValue || fields.turbidity?.stringValue || '0'), 'turbidity'),
+              normalRange: [0, 10],
+              listenings: 156
+            },
+            {
+              id: "temperature",
+              name: "อุณหภูมิ",
+              value: parseFloat(fields.temperature?.doubleValue || fields.temperature?.stringValue || '0'),
+              unit: "°C",
+              status: getStatus(parseFloat(fields.temperature?.doubleValue || fields.temperature?.stringValue || '0'), 'temperature'),
+              normalRange: [20, 30],
+              listenings: 98
+            }
+          ];
+          
+          setRealSensorData(sensorReadings);
+          setLastUpdate(new Date().toLocaleTimeString('th-TH'));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching sensor data:', error);
     }
-  ];
+  };
+
+  const getStatus = (value: number, type: string): 'normal' | 'warning' | 'error' => {
+    switch (type) {
+      case 'ph':
+        if (value >= 6.5 && value <= 8.5) return 'normal';
+        if (value >= 6.0 && value <= 9.0) return 'warning';
+        return 'error';
+      case 'tds':
+        if (value <= 300) return 'normal';
+        if (value <= 500) return 'warning';
+        return 'error';
+      case 'turbidity':
+        if (value <= 10) return 'normal';
+        if (value <= 25) return 'warning';
+        return 'error';
+      case 'temperature':
+        if (value >= 20 && value <= 30) return 'normal';
+        if (value >= 15 && value <= 35) return 'warning';
+        return 'error';
+      default:
+        return 'normal';
+    }
+  };
+
+  useEffect(() => {
+    fetchSensorData();
+    const interval = setInterval(fetchSensorData, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -86,7 +146,7 @@ const SensorReadings = () => {
       </div>
       
       <div className="space-y-4">
-        {sensorData.map((sensor, index) => (
+        {realSensorData.map((sensor, index) => (
           <div key={sensor.id} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
