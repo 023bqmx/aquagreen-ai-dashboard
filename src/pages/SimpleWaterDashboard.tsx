@@ -18,6 +18,12 @@ const SimpleWaterDashboard = () => {
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
 
+  useEffect(() => {
+    if (sensorData) {
+      console.log('sensorData updated:', sensorData);
+    }
+  }, [sensorData]);
+
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -140,22 +146,29 @@ const SimpleWaterDashboard = () => {
             <Card className="border-2 border-blue-200 hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="font-bold text-green-600">1</span>
                   <Droplets className="w-5 h-5 text-blue-500" />
                   ค่า pH
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-800 mb-2">
-                    {sensorData.ph.toFixed(2)}
-                  </div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-gray-600">6.5</span>
+                  <span className="text-gray-600">8.5</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
+                  <div
+                    className={`h-3 rounded-full ${getStatusColor(sensorData.ph, 'ph')}`}
+                    style={{ width: `${((sensorData.ph - 6.5) / (8.5 - 6.5)) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-lg text-gray-800">{sensorData.ph.toFixed(2)}</span>
                   <Badge className={`${getStatusColor(sensorData.ph, 'ph')} text-white px-3 py-1`}>
                     {getStatusText(sensorData.ph, 'ph')}
                   </Badge>
-                  <div className="text-sm text-gray-500 mt-2">
-                    ปกติ: 6.5-8.5
-                  </div>
                 </div>
+                <div className="text-sm text-gray-500 mt-2">ปกติ: 6.5-8.5</div>
               </CardContent>
             </Card>
 
@@ -163,23 +176,29 @@ const SimpleWaterDashboard = () => {
             <Card className="border-2 border-green-200 hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="font-bold text-yellow-600">2</span>
                   <Activity className="w-5 h-5 text-green-500" />
                   TDS
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-800 mb-2">
-                    {sensorData.tds.toFixed(1)}
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">ppm</div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-gray-600">0</span>
+                  <span className="text-gray-600">1000</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
+                  <div
+                    className={`h-3 rounded-full ${getStatusColor(sensorData.tds, 'tds')}`}
+                    style={{ width: `${(sensorData.tds / 1000) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-lg text-gray-800">{sensorData.tds.toFixed(1)} ppm</span>
                   <Badge className={`${getStatusColor(sensorData.tds, 'tds')} text-white px-3 py-1`}>
                     {getStatusText(sensorData.tds, 'tds')}
                   </Badge>
-                  <div className="text-sm text-gray-500 mt-2">
-                    ปกติ: ≤300 ppm
-                  </div>
                 </div>
+                <div className="text-sm text-gray-500 mt-2">ปกติ: ≤300 ppm</div>
               </CardContent>
             </Card>
 
@@ -187,23 +206,29 @@ const SimpleWaterDashboard = () => {
             <Card className="border-2 border-yellow-200 hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="font-bold text-red-600">3</span>
                   <Waves className="w-5 h-5 text-yellow-500" />
                   ความขุ่น
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-800 mb-2">
-                    {sensorData.turbidity.toFixed(1)}
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">%</div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-gray-600">0</span>
+                  <span className="text-gray-600">25</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
+                  <div
+                    className={`h-3 rounded-full ${getStatusColor(sensorData.turbidity, 'turbidity')}`}
+                    style={{ width: `${(sensorData.turbidity / 25) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-lg text-gray-800">{sensorData.turbidity.toFixed(1)} NTU</span>
                   <Badge className={`${getStatusColor(sensorData.turbidity, 'turbidity')} text-white px-3 py-1`}>
                     {getStatusText(sensorData.turbidity, 'turbidity')}
                   </Badge>
-                  <div className="text-sm text-gray-500 mt-2">
-                    ปกติ: ≤10%
-                  </div>
                 </div>
+                <div className="text-sm text-gray-500 mt-2">ปกติ: ≤10 NTU</div>
               </CardContent>
             </Card>
 
@@ -211,23 +236,29 @@ const SimpleWaterDashboard = () => {
             <Card className="border-2 border-red-200 hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="font-bold text-green-600">4</span>
                   <Thermometer className="w-5 h-5 text-red-500" />
                   อุณหภูมิ
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-800 mb-2">
-                    {sensorData.temperature.toFixed(1)}
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">°C</div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-gray-600">15</span>
+                  <span className="text-gray-600">35</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
+                  <div
+                    className={`h-3 rounded-full ${getStatusColor(sensorData.temperature, 'temperature')}`}
+                    style={{ width: `${((sensorData.temperature - 15) / (35 - 15)) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-lg text-gray-800">{sensorData.temperature.toFixed(1)} °C</span>
                   <Badge className={`${getStatusColor(sensorData.temperature, 'temperature')} text-white px-3 py-1`}>
                     {getStatusText(sensorData.temperature, 'temperature')}
                   </Badge>
-                  <div className="text-sm text-gray-500 mt-2">
-                    ปกติ: 20-30°C
-                  </div>
                 </div>
+                <div className="text-sm text-gray-500 mt-2">ปกติ: 20-30°C</div>
               </CardContent>
             </Card>
           </div>

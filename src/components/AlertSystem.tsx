@@ -12,6 +12,30 @@ interface AlertData {
 }
 
 const AlertSystem = () => {
+  // ฟังก์ชันส่งแจ้งเตือนไป LINE Messaging API (Push Message)
+  const sendLineMessage = async (message: string) => {
+    try {
+      await fetch("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer <NlqE6Z+IQZCUdMxf5mUSLkJ/1AcbV2uY50KrtnrN7wJ9UQgrOmAFMXVoRnyNiDeccUvbZesi5sN3qyOKWcEiPCPHRdmJdSJ6oN8A+OfIrBr0c23i4RajjytwTi1c5fULL2zQ2yPZEJNS1OEqDh9L+gdB04t89/1O/w1cDnyilFU=>"
+        },
+        body: JSON.stringify({
+          to: "<U412269167a85d5416b4a25b63b1cd2ce>", // หรือ groupId, roomId
+          messages: [
+            {
+              type: "text",
+              text: message
+            }
+          ]
+        })
+      });
+      console.log("✅ ส่งแจ้งเตือนไป LINE Messaging API สำเร็จ");
+    } catch (err) {
+      console.error("❌ ส่งแจ้งเตือนไป LINE Messaging API ไม่สำเร็จ:", err);
+    }
+  };
   const [alerts, setAlerts] = useState<AlertData[]>([]);
 
   // ✅ ตรวจสอบข้อมูลจาก Firebase ทุก 10 วินาที
@@ -79,8 +103,11 @@ const AlertSystem = () => {
         if (newAlerts.length > 0) {
           setAlerts(newAlerts);
           console.log(`🚨 พบปัญหา ${newAlerts.length} รายการ`);
+          // ส่งแจ้งเตือนไป LINE Messaging API เฉพาะเมื่อมีปัญหาเท่านั้น
+          sendLineMessage(`🚨 พบปัญหา ${newAlerts.length} รายการ\n${newAlerts.map(a => a.title + ': ' + a.message).join('\n')}`);
         } else {
           setAlerts([]);
+          // ไม่ต้องส่งแจ้งเตือนเมื่อข้อมูลปกติ
           console.log("✅ ข้อมูลปกติทั้งหมด");
         }
 
