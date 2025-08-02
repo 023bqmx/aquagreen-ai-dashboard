@@ -8,7 +8,7 @@ initializeApp();
 const db = getFirestore();
 
 // *** แทนที่ด้วย Channel Access Token ของคุณจาก Line Messaging API ***
-const LINE_CHANNEL_ACCESS_TOKEN = 'NlqE6Z+IQZCUdMxf5mUSLkJ/1AcbV2uY50KrtnrN7wJ9UQgrOmAFMXVoRnyNiDeccUvbZesi5sN3qyOKWcEiPCPHRdmJdSJ6oN8A+OfIrBr0c23i4RajjytwTi1c5fULL2zQ2yPZEJNS1OEqDh9L+gdB04t89/1O/w1cDnyilFU=';
+const LINE_CHANNEL_ACCESS_TOKEN = 'm+AtG/5cX+6Js/nVPg1j/6XgHM8FFpo91sXFAIUDK4FeT5oFLxgUPRHpryMcrCYxcUvbZesi5sN3qyOKWcEiPCPHRdmJdSJ6oN8A+OfIrBpCOxVslwFT3Ha7Px3HRpFzXtIHjWt8Lb+B0OXnMxyljAdB04t89/1O/w1cDnyilFU=';
 
 // *** ใส่ User ID ของผู้ที่จะรับการแจ้งเตือน ***
 const NOTIFICATION_USER_ID = 'U412269167a85d5416b4a25b63b1cd2ce'; // ต้องเป็น friend ของ bot
