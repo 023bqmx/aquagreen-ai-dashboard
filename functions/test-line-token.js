@@ -4,7 +4,7 @@ const https = require('https');
 const LINE_CHANNEL_ACCESS_TOKEN = 'NlqE6Z+IQZCUdMxf5mUSLkJ/1AcbV2uY50KrtnrN7wJ9UQgrOmAFMXVoRnyNiDeccUvbZesi5sN3qyOKWcEiPCPHRdmJdSJ6oN8A+OfIrBr0c23i4RajjytwTi1c5fULL2zQ2yPZEJNS1OEqDh9L+gdB04t89/1O/w1cDnyilFU=';
 
 // User ID ที่จะส่งข้อความหา (ต้องเป็น friend ของ bot)
-const USER_ID = 'U412269167a85d5416b4a25b63b1cd2ce'; // ใช้ User ID ที่คุณใส่ไว้ใน index.js
+const USER_ID = '@651zpkqy'; // ใช้ User ID ที่คุณใส่ไว้ใน index.js
 
 function testLineMessaging() {
     return new Promise((resolve, reject) => {
@@ -94,3 +94,5 @@ testLineMessaging()
         console.log('\n💥 Test failed with error:', error.message);
         process.exit(1);
     });
+    
+    sendLineBotMessage("ทดสอบแจ้งเตือนจาก LINE Bot!");
