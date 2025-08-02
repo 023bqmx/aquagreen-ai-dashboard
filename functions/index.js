@@ -108,7 +108,7 @@ exports.sendLineNotification = onDocumentCreated(
             console.warn('Turbidity value is undefined in data.');
             message += `❓ ความขุ่น: ไม่พบข้อมูล\n`;
             hasAlert = true;
-        } else if (turbidity > 40) { // เกิน 40 NTU คือผิดปกติ
+        } else if (turbidity > 50) { // เกิน 40 NTU คือผิดปกติ
             message += `⚠️ ความขุ่น: ${turbidity.toFixed(1)} NTU (สูงเกินไป! ควรต่ำกว่า 40 NTU)\n`;
             hasAlert = true;
         } else {
